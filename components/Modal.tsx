@@ -1,13 +1,17 @@
-import { VolumeOffIcon, XIcon } from '@heroicons/react/outline'
-import MuiModal from '@mui/material/Modal'
-import { useEffect, useState } from 'react'
-import ReactPlayer from 'react-player/lazy'
+import React, { useEffect, useState } from 'react'
 import { useRecoilState } from 'recoil'
 import { modalState, movieState } from '../atoms/modalAtom'
-import { Element, Genre } from '../typings'
 import { FaPlay } from 'react-icons/fa'
-import { PlusIcon, VolumeUpIcon } from '@heroicons/react/solid'
-import { ThumbUpIcon } from '@heroicons/react/outline'
+import {
+  PlusIcon,
+  ThumbUpIcon,
+  VolumeOffIcon,
+  VolumeUpIcon,
+  XIcon,
+} from '@heroicons/react/outline'
+import { Element, Genre } from '../typings'
+import MuiModal from '@mui/material/Modal'
+import ReactPlayer from 'react-player/lazy'
 
 function Modal() {
   const [showModal, setShowModal] = useRecoilState(modalState)
@@ -47,7 +51,7 @@ function Modal() {
     setShowModal(false)
   }
 
-  console.log(trailer)
+  const url = `https://www.youtube.com/watch?v=${trailer}`
 
   return (
     <MuiModal
@@ -65,10 +69,10 @@ function Modal() {
 
         <div className="relative pt-[56.25%]">
           <ReactPlayer
-            url={`https://www.youtube.com/watch?v=${trailer}`}
+            url={url}
+            style={{ position: 'absolute', top: '0', left: '0' }}
             width="100%"
             height="100%"
-            style={{ position: 'absolute', top: '0', left: '0' }}
             playing
             muted={muted}
           />
