@@ -32,8 +32,11 @@ const Home = ({
 }: Props) => {
   const { loading } = useAuth()
   const showModal = useRecoilValue(modalState)
+  const subscription = true
 
-  if (loading) return null
+  if (loading || subscription === null) return null
+
+  if (!subscription) return <div>Planos</div>
 
   return (
     <div className="relative h-screen bg-gradient-to-b lg:h-[140vh]">

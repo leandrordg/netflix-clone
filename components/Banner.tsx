@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { baseUrl } from '../constants/movie'
-import { Movie } from '../typings'
+import { Genre, Movie } from '../typings'
 import { FaPlay } from 'react-icons/fa'
 import { InformationCircleIcon } from '@heroicons/react/solid'
 import { useRecoilState } from 'recoil'
@@ -15,12 +15,34 @@ function Banner({ netflixOriginals }: Props) {
   const [movie, setMovie] = useState<Movie | null>(null)
   const [showModal, setShowModal] = useRecoilState(modalState)
   const [currentMovie, setCurrentMovie] = useRecoilState(movieState)
+  const [genres, setGenres] = useState<Genre[]>([])
+
+  const year = new Date()
 
   useEffect(() => {
     setMovie(
       netflixOriginals[Math.floor(Math.random() * netflixOriginals.length)]
     )
   }, [netflixOriginals])
+
+  useEffect(() => {
+    async function fetchGenre() {
+      const data = await fetch(
+        `https://api.themoviedb.org/3/${
+          movie?.media_type === 'tv' ? 'tv' : 'movie'
+        }/${movie?.id}?api_key=${
+          process.env.NEXT_PUBLIC_API_KEY
+        }&language=pt-BR&append_to_response=videos`
+      )
+        .then((response) => response.json())
+        .catch((err) => console.log(err.message))
+      if (data?.genres) {
+        setGenres(data.genres)
+      }
+    }
+    fetchGenre()
+    console.log(movie)
+  }, [movie])
 
   return (
     <div className="flex flex-col space-y-2 py-16 md:space-y-4 lg:h-[65vh] lg:justify-end lg:pb-12">
@@ -35,6 +57,15 @@ function Banner({ netflixOriginals }: Props) {
       <h1 className="text-2xl font-bold md:text-4xl lg:text-7xl">
         {movie?.title || movie?.name || movie?.original_name}
       </h1>
+
+      <div className="flex items-center space-x-2 md:text-lg lg:text-xl">
+        <p className={`${movie?.vote_average < 6 ? "text-orange-500" : "text-green-500"}`}>
+          {movie?.vote_average}
+          <span> pontos</span>
+        </p>
+        <p>{movie?.release_date.slice(0, 4)}</p>
+      </div>
+
       <p className="max-w-xs text-xs text-shadow-sm md:max-w-lg md:text-lg lg:max-w-2xl lg:text-2xl">
         {`${movie?.overview.substring(0, 140)}...`}
       </p>
@@ -54,6 +85,11 @@ function Banner({ netflixOriginals }: Props) {
           Informações
           <InformationCircleIcon className="h-5 w-5 md:h-8 md:w-8" />
         </button>
+      </div>
+
+      <div className="font-light text-white md:text-lg lg:text-xl">
+        <span className="font-semibold">Generos: </span>
+        {genres.map((genre) => genre.name).join(', ')}
       </div>
     </div>
   )
