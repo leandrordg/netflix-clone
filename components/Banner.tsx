@@ -41,7 +41,6 @@ function Banner({ netflixOriginals }: Props) {
       }
     }
     fetchGenre()
-    console.log(movie)
   }, [movie])
 
   return (
